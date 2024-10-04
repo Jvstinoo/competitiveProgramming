@@ -49,7 +49,8 @@ string to_lower(string a) { for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a
 bool prime(ll a) { if (a==1) return 0; for (int i=2;i<=round(sqrt(a));++i) if (a%i==0) return 0; return 1; }
 void yes() { cout<<"YES\n"; }
 void no() { cout<<"NO\n"; }
-// string to int: stoi(string)
+
+
 
 /*  All Required define Pre-Processors and typedef Constants */
 typedef long int int32;
@@ -59,9 +60,46 @@ typedef unsigned long long int  uint64;
 
 /* clang-format on */
 
+// struct Matrix {
+//     unordered_map<int, int[9]> grid;
+// }
+
+struct Square {
+    int row;
+    int col;
+    int val;
+    int usedOptions[9];
+};
+
+// Square getOption(int row, int col) {
+//     f(i,0,9) {
+//         f(j,0,9) {
+//             if ((rows[row][j] == i || cols[col][j] == i) && !inUsedOptions[i])
+//                 return {.row = row, .col = col, .val = val};
+//         }
+//     }
+//     return {};
+// }
+
 /* Main()  function */
-int main()
-{
-	return 0;
+int main() {
+    unordered_map<int, int[9]> grid;
+    f(i,0,9) {
+        string column;
+        getline(cin, column);
+        f(j,0,9) {
+            string s{column.at(j)};
+            if (s != ".")
+                grid[i][j] = stoi(s);
+        }
+    }
+    f(i,0,9) {
+        auto cols = grid[i];
+        f(i,0,9) {
+            cout << cols[i];
+        }
+        cout << "\n";
+    }
+    return 0;
 }
 /* Main() Ends Here */
