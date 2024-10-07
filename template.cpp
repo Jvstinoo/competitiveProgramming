@@ -62,6 +62,9 @@ typedef unsigned long long int  uint64;
 /* Main()  function */
 int main()
 {
+    bitset<1> used{0x0};
+    cout << used;
+    cout << used == 1;
 	return 0;
 }
 /* Main() Ends Here */

@@ -1,3 +1,4 @@
+#include "sudokuSolver.h"
 #include <bits/stdc++.h>
 #include <algorithm>
 using namespace std;
@@ -23,7 +24,7 @@ void swapp(P &a, P &b) {
 }
 
 /* FUNCTIONS */
-#define f(i,s,e) for(long long int i=s;i<e;i++)
+#define f(i,s,e) for(int i=s;i<e;i++)
 #define cf(i,s,e) for(long long int i=s;i<=e;i++)
 #define rf(i,e,s) for(long long int i=e-1;i>=s;i--)
 #define lm(it, map) for (auto it = map.begin(); it != map.end(); it++)
@@ -60,46 +61,95 @@ typedef unsigned long long int  uint64;
 
 /* clang-format on */
 
-// struct Matrix {
-//     unordered_map<int, int[9]> grid;
-// }
+// Checks if sq is an option for square.
+bool SudokuSolver::isOption(Square &sq) {
+    f(i,0,9) {
+        if (!inRow(sq, i) && !inColumn(sq, i) && !inGrid(sq, i) && !sq.usedOptions[i]) {
+            sq.val = i;
+            sq.usedOptions[i] = 1;
+            return true;
+        }
+    }
+    return false;
+}
 
-struct Square {
-    int row;
-    int col;
-    int val;
-    int usedOptions[9];
-};
+bool SudokuSolver::inRow(Square &sq, int possibleOption) {
+    f(i,0,9) {
+        if (grid[sq.row][i].val == i)
+            return true;
+    }
+    return false;
+}
 
-// Square getOption(int row, int col) {
-//     f(i,0,9) {
-//         f(j,0,9) {
-//             if ((rows[row][j] == i || cols[col][j] == i) && !inUsedOptions[i])
-//                 return {.row = row, .col = col, .val = val};
-//         }
-//     }
-//     return {};
-// }
+bool SudokuSolver::inColumn(Square &sq, int possibleOption) {
+    f(i,0,9) {
+        if (grid[i][sq.row].val == i)
+            return true;
+    }
+    return false;
+}
 
-/* Main()  function */
-int main() {
-    unordered_map<int, int[9]> grid;
+bool SudokuSolver::inGrid(Square &sq, int possibleOption) {
+    int start_row = 0;
+    int start_col = 0;
+    if (sq.row < 4)
+        start_row = 0;
+    if (sq.row < 7)
+        start_row = 3;
+    else {
+        start_row = 6;
+    }
+    if (sq.col < 4)
+        start_col = 0;
+    if (sq.col < 7)
+        start_col = 3;
+    else {
+        start_col = 6;
+    }
+    f(row,start_row,start_row+3) {
+        f(column,start_col,start_col+3) {
+            if (grid[row][column].val == possibleOption)
+                return true;
+        }
+    }
+    return false;
+}
+
+
+void SudokuSolver::solver(int r, int c) {
+    if (r == 8 && c == 8)
+        cout << "Solved";
+    // if (getOption(r, c))
+}
+
+unordered_map<int, Square[9]> SudokuSolver::parseInput() {
+    unordered_map<int, Square[9]> grid;
     f(i,0,9) {
         string column;
         getline(cin, column);
         f(j,0,9) {
             string s{column.at(j)};
             if (s != ".")
-                grid[i][j] = stoi(s);
+                grid[i][j] = {.row = i, .col = j, .val = stoi(s)};
         }
     }
+    return grid;
+}
+
+void SudokuSolver::printGrid() {
     f(i,0,9) {
-        auto cols = grid[i];
-        f(i,0,9) {
-            cout << cols[i];
+        for (Square& sq: grid[i]) {
+            cout << sq.val;
         }
         cout << "\n";
     }
+}
+
+/* Main()  function */
+int main() {
+    SudokuSolver sudokuSolver = SudokuSolver();
+    // solver.solve(0,0);
+    sudokuSolver.printGrid();
     return 0;
 }
-/* Main() Ends Here */
+
