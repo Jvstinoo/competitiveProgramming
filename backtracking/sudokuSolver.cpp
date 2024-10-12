@@ -61,10 +61,13 @@ typedef unsigned long long int  uint64;
 
 /* clang-format on */
 
-// Checks if sq is an option for square.
-bool SudokuSolver::isOption(Square &sq) {
-    f(i,0,9) {
-        if (!inRow(sq, i) && !inColumn(sq, i) && !inGrid(sq, i) && !sq.usedOptions[i]) {
+// Gets an option taking into consideration usedOptions and allowed values depending on row, column and grid.
+bool SudokuSolver::getOption(Square &sq)
+{
+    f(i, 0, 9)
+    {
+        if (!inRow(sq, i) && !inColumn(sq, i) && !inGrid(sq, i) && !sq.usedOptions[i])
+        {
             sq.val = i;
             sq.usedOptions[i] = 1;
             return true;
@@ -73,41 +76,50 @@ bool SudokuSolver::isOption(Square &sq) {
     return false;
 }
 
-bool SudokuSolver::inRow(Square &sq, int possibleOption) {
-    f(i,0,9) {
+bool SudokuSolver::inRow(Square &sq, int possibleOption)
+{
+    f(i, 0, 9)
+    {
         if (grid[sq.row][i].val == i)
             return true;
     }
     return false;
 }
 
-bool SudokuSolver::inColumn(Square &sq, int possibleOption) {
-    f(i,0,9) {
+bool SudokuSolver::inColumn(Square &sq, int possibleOption)
+{
+    f(i, 0, 9)
+    {
         if (grid[i][sq.row].val == i)
             return true;
     }
     return false;
 }
 
-bool SudokuSolver::inGrid(Square &sq, int possibleOption) {
+bool SudokuSolver::inGrid(Square &sq, int possibleOption)
+{
     int start_row = 0;
     int start_col = 0;
     if (sq.row < 4)
         start_row = 0;
     if (sq.row < 7)
         start_row = 3;
-    else {
+    else
+    {
         start_row = 6;
     }
     if (sq.col < 4)
         start_col = 0;
     if (sq.col < 7)
         start_col = 3;
-    else {
+    else
+    {
         start_col = 6;
     }
-    f(row,start_row,start_row+3) {
-        f(column,start_col,start_col+3) {
+    f(row, start_row, start_row + 3)
+    {
+        f(column, start_col, start_col + 3)
+        {
             if (grid[row][column].val == possibleOption)
                 return true;
         }
@@ -115,41 +127,84 @@ bool SudokuSolver::inGrid(Square &sq, int possibleOption) {
     return false;
 }
 
-
-void SudokuSolver::solver(int r, int c) {
-    if (r == 8 && c == 8)
-        cout << "Solved";
-    // if (getOption(r, c))
-}
-
-unordered_map<int, Square[9]> SudokuSolver::parseInput() {
+unordered_map<int, Square[9]> SudokuSolver::parseInput()
+{
     unordered_map<int, Square[9]> grid;
-    f(i,0,9) {
-        string column;
-        getline(cin, column);
-        f(j,0,9) {
-            string s{column.at(j)};
-            if (s != ".")
-                grid[i][j] = {.row = i, .col = j, .val = stoi(s)};
+    f(i, 0, 9)
+    {
+        string s;
+        cin >> s;
+        f(j, 0, 9)
+        {
+            if (s.at(j) != '.')
+                grid[i][j] = {.row = i, .col = j, .val = stoi(string(1, s.at(j)))};
         }
     }
     return grid;
 }
 
-void SudokuSolver::printGrid() {
-    f(i,0,9) {
-        for (Square& sq: grid[i]) {
+void SudokuSolver::printGrid()
+{
+    f(i, 0, 9)
+    {
+        for (Square &sq : grid[i])
+        {
             cout << sq.val;
         }
         cout << "\n";
     }
 }
 
+void SudokuSolver::solver(int r, int c)
+{
+    cout << grid[r][c].val << " \n";
+    if (r == 8 && c == 8)
+    {
+        cout << "Solved";
+    }
+    else if (grid[r][c].val == 0)
+    {
+        bool anyOption = getOption(grid[r][c]);
+        if (!anyOption)
+        {
+            Square *last_sq = changed_squares.top();
+            changed_squares.pop();
+            last_sq->val = 0;
+            last_sq->possibleOption = false;
+            solver(last_sq->row, last_sq->col);
+        }
+        else
+        {
+            changed_squares.push(&grid[r][c]);
+        }
+    }
+    else if (c == 8)
+    {
+        solver(r + 1, 0);
+    }
+    solver(r, c + 1);
+}
+
 /* Main()  function */
-int main() {
+int main()
+{
     SudokuSolver sudokuSolver = SudokuSolver();
-    // solver.solve(0,0);
+    sudokuSolver.solver(0, 0);
+    // if isSolved : print board
     sudokuSolver.printGrid();
     return 0;
 }
 
+/*
+
+.46...9..
+.3.1.....
+.2..6..85
+...87....
+6...3...4
+....14...
+79..5..3.
+.....2.4.
+..2...61.
+
+*/

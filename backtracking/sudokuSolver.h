@@ -19,9 +19,10 @@ class SudokuSolver {
         void printGrid();
     private:
         std::unordered_map<int, Square[9]> parseInput();
-        bool isOption(Square &sq);
+        bool getOption(Square &sq);
         bool inRow(Square &sq, int possibleOption);
         bool inColumn(Square &sq, int possibleOption);
         bool inGrid(Square &sq, int possibleOption);
         std::unordered_map<int, Square[9]> grid;
+        std::stack<Square*> changed_squares;
 };
